@@ -57,7 +57,7 @@ public class OverlayService extends Service {
         myView.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                Log.d("MyTag", "touch me");
+                Log.d("MyTag", "--external app touch, countdown reset --");
                 timer.cancel();
                 timer.start();
                 return true;

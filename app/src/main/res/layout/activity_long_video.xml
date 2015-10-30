@@ -5,9 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#000000"
-    tools:context=".LongVideoActivity"
-    android:onClick="startService"
-    >
+    tools:context=".LongVideoActivity">
+    <!--android:onClick="startService"-->
+
 
     <VideoView
         android:id="@+id/longvideoView"

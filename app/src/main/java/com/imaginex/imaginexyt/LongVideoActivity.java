@@ -3,18 +3,13 @@ package com.imaginex.imaginexyt;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnTouchListener;
 import android.widget.RelativeLayout;
 import android.widget.VideoView;
-
-import java.util.List;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -70,36 +65,59 @@ public class LongVideoActivity extends Activity {
 
        RelativeLayout layout = (RelativeLayout) findViewById(R.id.videoOverlay);
 
+        final View decorView = getWindow().getDecorView();
+        decorView.setOnSystemUiVisibilityChangeListener
+                (new View.OnSystemUiVisibilityChangeListener() {
+                    @Override
+                    public void onSystemUiVisibilityChange(int visibility) {
+                        // Note that system bars will only be "visible" if none of the
+                        // LOW_PROFILE, HIDE_NAVIGATION, or FULLSCREEN flags are set.
+                        if ((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0) {
+                            // TODO: The system bars are visible. Make any desired
+                            Log.d("MyTag", "Touch detected, playing next video and launching app");
+                            longvidView.stopPlayback();
+                            shortvidView.start();
+                            shortvidView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+
+                                @Override
+                                public void onCompletion(MediaPlayer mp) {
+                                    startService(decorView);
+                                    String url = "http://imaginex.co";
+                                    Intent i = new Intent(Intent.ACTION_VIEW);
+                                    i.setData(Uri.parse(url));
+                                    startActivity(i);
+                                }
+                            });
+                        } else {
+                            Log.d("MyTag", "Other thing detected");
+                            // TODO: The system bars are NOT visible. Make any desired
+                            // adjustments to your UI, such as hiding the action bar or
+                            // other navigational controls.
+                        }
+                    }
+                });
+/*
         layout.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                Log.d("MyTag", "---Touch detected---");
+                Log.d("MyTag", "Touch detected, playing next video and launching app");
                 longvidView.stopPlayback();
                 shortvidView.start();
                 shortvidView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
 
                     @Override
                     public void onCompletion(MediaPlayer mp) {
-                        Uri location = Uri.parse("geo:0,0?q=1600+Amphitheatre+Parkway,+Mountain+View,+California");
-                        // Or map point based on latitude/longitude
-                        // Uri location = Uri.parse("geo:37.422219,-122.08364?z=14"); // z param is zoom level
-                        Intent mapIntent = new Intent(Intent.ACTION_VIEW, location);
-                        PackageManager packageManager = getPackageManager();
-                        List activities = packageManager.queryIntentActivities(mapIntent,
-                                PackageManager.MATCH_DEFAULT_ONLY);
-                        boolean isIntentSafe = activities.size() > 0;
-                        if (isIntentSafe == true) {
-                        //    startActivity(mapIntent); // Replace this with the YouTube app or whatever
-                        } else {
-                            Log.w("MyTag", "Invalid Intent");
-                        }
+                        String url = "http://imaginex.co";
+                        Intent i = new Intent(Intent.ACTION_VIEW);
+                        i.setData(Uri.parse(url));
+                        startActivity(i);
                     }
                 });
                 return false;
             }
+        }):
+*/
 
-
-        });
 
 
     }
@@ -137,6 +155,13 @@ public class LongVideoActivity extends Activity {
 
     public void stopVideo(){
 
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        final View decorView = getWindow().getDecorView();
+        stopService(decorView);
     }
 
 
