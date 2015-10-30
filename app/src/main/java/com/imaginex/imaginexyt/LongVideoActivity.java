@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.RelativeLayout;
 import android.widget.VideoView;
 
 /**
@@ -57,14 +56,6 @@ public class LongVideoActivity extends Activity {
         longvidView.setVideoURI(vidUri);
         playVideo();
 
-        shortvidView = (VideoView)findViewById(R.id.shortvideoView);
-        vidAddress = "android.resource://"+getPackageName()+"/"+R.raw.garlic;
-        vidUri = Uri.parse(vidAddress);
-        shortvidView.setVideoURI(vidUri);
-        shortvidView.setZOrderOnTop(true);
-
-       RelativeLayout layout = (RelativeLayout) findViewById(R.id.videoOverlay);
-
         final View decorView = getWindow().getDecorView();
         decorView.setOnSystemUiVisibilityChangeListener
                 (new View.OnSystemUiVisibilityChangeListener() {
@@ -76,18 +67,11 @@ public class LongVideoActivity extends Activity {
                             // TODO: The system bars are visible. Make any desired
                             Log.d("MyTag", "Touch detected, playing next video and launching app");
                             longvidView.stopPlayback();
-                            shortvidView.start();
-                            shortvidView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-
-                                @Override
-                                public void onCompletion(MediaPlayer mp) {
                                     startService(decorView);
                                     String url = "http://imaginex.co";
                                     Intent i = new Intent(Intent.ACTION_VIEW);
                                     i.setData(Uri.parse(url));
                                     startActivity(i);
-                                }
-                            });
                         } else {
                             Log.d("MyTag", "Other thing detected");
                             // TODO: The system bars are NOT visible. Make any desired
